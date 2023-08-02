@@ -28,7 +28,8 @@ Copy and paste the following at the bottom of the bash file: "source ~/arctos/in
 
 To test out and make sure everything is correctly installed you can launch the demo simulation \
 `cd ~/arctos`\
-`ros2 launch arctos_moveit_config demo.launch.py` \
+`source install/local_setup.bash`\
+`ros2 launch arctos_moveit_config demo.launch.py` 
 
 This should launch RVIZ and load the Arctos robot arm. 
 
