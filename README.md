@@ -1,5 +1,5 @@
 # Arctos
-This is a ROS2 package for the Arctos arm. make sure [ROS2](https://docs.ros.org/en/humble/Installation.html) and [MoveIt2](https://moveit.ros.org/install-moveit2/binary/) are installed, along with there dev tools.
+This is a ROS2 package for the Arctos arm. make sure [ROS2](https://docs.ros.org/en/humble/Installation.html) and [MoveIt2](https://moveit.ros.org/install-moveit2/binary/) are installed, along with their dev tools.
 
 ## Installation
 ### Install dependency controller packages
