@@ -3,22 +3,36 @@ controller_manager:
   ros__parameters:
     update_rate: 100  # Hz
 
-    arctos_arm_controller:
+    arm_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+
+    gripper_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-arctos_arm_controller:
+arm_controller:
   ros__parameters:
     joints:
-      - Joint_1
-      - Joint_2
-      - Joint_3
-      - Joint_4
-      - Joint_5
-      - Joint_6
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+gripper_controller:
+  ros__parameters:
+    joints:
+      - jaw1
+      - jaw2
     command_interfaces:
       - position
     state_interfaces:

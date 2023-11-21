@@ -3,11 +3,11 @@ moveit_setup_assistant_config:
     package: arctos_description
     relative_path: urdf/arctos.urdf
   srdf:
-    relative_path: config/arctos_description.srdf
+    relative_path: config/arctos_urdf.srdf
   package_settings:
     author_name: Coen Heerink
-    author_email: coenheerink@outlook.com
-    generated_timestamp: 1690983867
+    author_email: coenheerink@outlookc.om
+    generated_timestamp: 1700569769
   control_xacro:
     command:
       - position
