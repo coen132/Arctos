@@ -12,7 +12,7 @@ This is a ROS2 package for the Arctos arm. make sure [ROS2](https://docs.ros.org
 ### Make a directory and clone the source code
 `mkdir -p arctos/src`\
 `cd arctos/src`\
-`git clone git@github.com:coen132/arctos.git`
+`git clone https://github.com/coen132/arctos.git`
 
 ### Build the workspace
 `cd ~/arctos`\
