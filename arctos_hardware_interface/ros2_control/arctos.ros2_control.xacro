@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="turck_encoder_driver" params="joint can_node_id can_topic_in can_topic_out vel_buf_size">
+
+    <ros2_control name="${joint}_encoder" type="sensor">
+      <hardware>
+        <plugin>turck_encoder_driver/EncoderInterface</plugin>
+        <param name="can_node_id">${can_node_id}</param>
+        <param name="can_topic_in">${can_topic_in}</param>
+        <param name="can_topic_out">${can_topic_out}</param>
+        <param name="vel_buf_size">${vel_buf_size}</param>
+      </hardware>
+
+      <joint name="${joint}">
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+    </ros2_control>
+  </xacro:macro>
+
+</robot>
