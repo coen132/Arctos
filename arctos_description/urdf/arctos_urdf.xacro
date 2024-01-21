@@ -223,35 +223,35 @@
   </collision>
 </link>
 
-<joint name="joint1" type="continuous">
+<joint name="joint_1" type="continuous">
   <origin xyz="0.0 0.000529 0.111" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="Link_1_1"/>
   <axis xyz="-0.0 0.0 1.0"/>
 </joint>
 
-<joint name="joint2" type="continuous">
+<joint name="joint_2" type="continuous">
   <origin xyz="-0.05713 -0.020885 0.178378" rpy="0 0 0"/>
   <parent link="Link_1_1"/>
   <child link="Link_2_1"/>
   <axis xyz="1.0 -0.0 -0.0"/>
 </joint>
 
-<joint name="joint3" type="continuous">
+<joint name="joint_3" type="continuous">
   <origin xyz="0.10013 0.001311 0.261007" rpy="0 0 0"/>
   <parent link="Link_2_1"/>
   <child link="Link_3_1"/>
   <axis xyz="-1.0 -0.0 0.0"/>
 </joint>
 
-<joint name="joint4" type="continuous">
+<joint name="joint_4" type="continuous">
   <origin xyz="-0.042999 -0.139695 0.021705" rpy="0 0 0"/>
   <parent link="Link_3_1"/>
   <child link="Link_4_1"/>
   <axis xyz="-0.0 1.0 -0.0"/>
 </joint>
 
-<joint name="joint5" type="continuous">
+<joint name="joint_5" type="continuous">
   <origin xyz="-0.039012 -0.121187 -0.001774" rpy="0 0 0"/>
   <parent link="Link_4_1"/>
   <child link="Link_5_1"/>
@@ -264,7 +264,7 @@
   <child link="Gripper_1"/>
 </joint>
 
-<joint name="joint6" type="continuous">
+<joint name="joint_6" type="continuous">
   <origin xyz="0.039204 -0.033835 0.0" rpy="0 0 0"/>
   <parent link="Link_5_1"/>
   <child link="Link_6_1"/>
