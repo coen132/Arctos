@@ -1,135 +1,129 @@
+// Copyright 2023 ros2_control Development Team
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #include "arctos_interface.hpp"
-#include "hardware_interface/types/hardware_interface_type_values.hpp"
+#include <string>
+#include <vector>
 
 namespace arctos_interface
 {
-    hardware_interface::CallbackReturn ArctosInterface::on_init(const hardware_interface::HardwareInfo & info) 
+CallbackReturn ArctosInterface::on_init(const hardware_interface::HardwareInfo & info)
+{
+  if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS)
+  {
+    return CallbackReturn::ERROR;
+  }
+
+  // robot has 6 joints and 2 interfaces
+  joint_position_.assign(6, 0);
+  joint_velocities_.assign(6, 0);
+  joint_position_command_.assign(6, 0);
+  joint_velocities_command_.assign(6, 0);
+
+  // force sensor has 6 readings
+  ft_states_.assign(6, 0);
+  ft_command_.assign(6, 0);
+
+  for (const auto & joint : info_.joints)
+  {
+    for (const auto & interface : joint.state_interfaces)
     {
-        if (hardware_interface::SystemInterface::on_init(info) !=  hardware_interface::CallbackReturn::SUCCESS)
-        {
-            return hardware_interface::CallbackReturn::ERROR; 
-        }
-        // pub_can_ = p_node_->create_publisher<can_msgs::msg::Frame>("/to_can_bus", 5);
-        // timer_can_activate_ = p_node_->create_wall_timer(
-        // std::chrono::seconds(2),
-        // std::bind(&ArctosInterface::request_motor_angle, this)
-        // );
-
-        hw_states_position_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
-        hw_states_velocity_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN()); 
-        hw_commands_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());    
-
-        for (const hardware_interface::ComponentInfo & joint : info_.joints)
-        {
-            if (joint.command_interfaces.size()!= 1)
-            {
-                RCLCPP_FATAL(rclcpp::get_logger("AcrtosInterface"),
-                "Joint '%s' has %zu command interfaces found. 1 expected.", joint.name.c_str(),
-                joint.command_interfaces.size());
-                return hardware_interface::CallbackReturn::ERROR;
-            }
-            if (joint.command_interfaces[0].name != hardware_interface::HW_IF_POSITION)
-            {
-                RCLCPP_FATAL(rclcpp::get_logger("AcrtosInterface"),
-                "Joint '%s' has %s command interfaces found. %s expected.", joint.name.c_str(),
-                joint.command_interfaces[0].name.c_str(), hardware_interface::HW_IF_POSITION);
-                return hardware_interface::CallbackReturn::ERROR;
-            }
-            if (joint.state_interfaces.size()!= 2)
-            {
-                RCLCPP_FATAL(rclcpp::get_logger("AcrtosInterface"),
-                "Joint '%s' has %zu command interfaces found. 2 expected.", joint.name.c_str(),
-                joint.state_interfaces.size());
-                return hardware_interface::CallbackReturn::ERROR;
-            }
-            if (joint.state_interfaces[0].name != hardware_interface::HW_IF_POSITION)
-            {
-                RCLCPP_FATAL(rclcpp::get_logger("AcrtosInterface"),
-                "Joint '%s' has %s command interfaces found. %s expected.", joint.name.c_str(),
-                joint.state_interfaces[0].name.c_str(), hardware_interface::HW_IF_POSITION);
-                return hardware_interface::CallbackReturn::ERROR;
-            }
-            if (joint.state_interfaces[0].name != hardware_interface::HW_IF_VELOCITY)
-            {
-                RCLCPP_FATAL(rclcpp::get_logger("AcrtosInterface"),
-                "Joint '%s' has %s command interfaces found. %s expected.", joint.name.c_str(),
-                joint.state_interfaces[0].name.c_str(), hardware_interface::HW_IF_VELOCITY);
-                return hardware_interface::CallbackReturn::ERROR;
-            }
-        }
-        return hardware_interface::CallbackReturn::SUCCESS;
+      joint_interfaces[interface.name].push_back(joint.name);
     }
-    hardware_interface::CallbackReturn ArctosInterface::on_configure(const rclcpp_lifecycle::State &)
-    {
-        for (uint i = 0; i< hw_states_position_.size(); i++)
-        {
-            hw_states_position_[i] = 0;
-            hw_states_velocity_[i] = 0;
-            hw_commands_[i] = 0;
-        }
+  }
 
-        RCLCPP_INFO(rclcpp::get_logger("AcrtosInterface"), "Succesfully configured!");
-
-        return hardware_interface::CallbackReturn::SUCCESS;
-    }
-
-    hardware_interface::CallbackReturn ArctosInterface::on_activate(const rclcpp_lifecycle::State &)
-    {
-            return hardware_interface::CallbackReturn::SUCCESS;
-    }
-
-    hardware_interface::CallbackReturn ArctosInterface::on_deactivate(const rclcpp_lifecycle::State &)
-    {
-            return hardware_interface::CallbackReturn::SUCCESS;
-    }
-
-    std::vector<hardware_interface::StateInterface> ArctosInterface::export_state_interfaces()
-    {
-        std::vector<hardware_interface::StateInterface> state_interfaces;
-        for (uint i; i < info_.joints.size(); i++)
-        {
-            state_interfaces.emplace_back(hardware_interface::StateInterface(info_.joints[i].name,
-            hardware_interface::HW_IF_POSITION, &hw_states_position_[i]));
-
-            state_interfaces.emplace_back(hardware_interface::StateInterface(info_.joints[i].name,
-            hardware_interface::HW_IF_VELOCITY, &hw_states_velocity_[i]));
-        }
-        return state_interfaces;
-    }
-
-    std::vector<hardware_interface::CommandInterface> ArctosInterface::export_command_interfaces()
-    {
-        std::vector<hardware_interface::CommandInterface> command_interfaces;
-        for (uint i; i < info_.joints.size(); i++)
-        {
-            command_interfaces.emplace_back(hardware_interface::CommandInterface(info_.joints[i].name,
-            hardware_interface::HW_IF_POSITION, &hw_commands_[i]));
-        }
-        return command_interfaces;
-    }
-
-    hardware_interface::return_type ArctosInterface::read(const rclcpp::Time &, const rclcpp::Duration &)
-    {
-        return hardware_interface::return_type::OK;
-    }
-
-    hardware_interface::return_type ArctosInterface::write(const rclcpp::Time &, const rclcpp::Duration &)
-    {
-        return hardware_interface::return_type::OK;
-    }
-
-// void ArctosInterface::request_motor_angle() {
-
-//     can_msgs::msg::Frame request_angle_frame;
-//     request_angle_frame.dlc = 2;
-//     request_angle_frame.data = {48, 49, 0, 0, 0, 0, 0, 0};
-//     request_angle_frame.id = 1;
-//     pub_can_->publish(request_angle_frame);
-// }
-
-ArctosInterface::ArctosInterface(){
-
+  return CallbackReturn::SUCCESS;
 }
+
+std::vector<hardware_interface::StateInterface> ArctosInterface::export_state_interfaces()
+{
+  std::vector<hardware_interface::StateInterface> state_interfaces;
+
+  int ind = 0;
+  for (const auto & joint_name : joint_interfaces["position"])
+  {
+    state_interfaces.emplace_back(joint_name, "position", &joint_position_[ind++]);
+  }
+
+  ind = 0;
+  for (const auto & joint_name : joint_interfaces["velocity"])
+  {
+    state_interfaces.emplace_back(joint_name, "velocity", &joint_velocities_[ind++]);
+  }
+
+  state_interfaces.emplace_back("tcp_fts_sensor", "force.x", &ft_states_[0]);
+  state_interfaces.emplace_back("tcp_fts_sensor", "force.y", &ft_states_[1]);
+  state_interfaces.emplace_back("tcp_fts_sensor", "force.z", &ft_states_[2]);
+  state_interfaces.emplace_back("tcp_fts_sensor", "torque.x", &ft_states_[3]);
+  state_interfaces.emplace_back("tcp_fts_sensor", "torque.y", &ft_states_[4]);
+  state_interfaces.emplace_back("tcp_fts_sensor", "torque.z", &ft_states_[5]);
+
+  return state_interfaces;
 }
+
+std::vector<hardware_interface::CommandInterface> ArctosInterface::export_command_interfaces()
+{
+  std::vector<hardware_interface::CommandInterface> command_interfaces;
+
+  int ind = 0;
+  for (const auto & joint_name : joint_interfaces["position"])
+  {
+    command_interfaces.emplace_back(joint_name, "position", &joint_position_command_[ind++]);
+  }
+
+  ind = 0;
+  for (const auto & joint_name : joint_interfaces["velocity"])
+  {
+    command_interfaces.emplace_back(joint_name, "velocity", &joint_velocities_command_[ind++]);
+  }
+
+  command_interfaces.emplace_back("tcp_fts_sensor", "force.x", &ft_command_[0]);
+  command_interfaces.emplace_back("tcp_fts_sensor", "force.y", &ft_command_[1]);
+  command_interfaces.emplace_back("tcp_fts_sensor", "force.z", &ft_command_[2]);
+  command_interfaces.emplace_back("tcp_fts_sensor", "torque.x", &ft_command_[3]);
+  command_interfaces.emplace_back("tcp_fts_sensor", "torque.y", &ft_command_[4]);
+  command_interfaces.emplace_back("tcp_fts_sensor", "torque.z", &ft_command_[5]);
+
+  return command_interfaces;
+}
+
+return_type ArctosInterface::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & period)
+{
+  // TODO(pac48) set sensor_states_ values from subscriber
+
+  for (auto i = 0ul; i < joint_velocities_command_.size(); i++)
+  {
+    joint_velocities_[i] = joint_velocities_command_[i];
+    joint_position_[i] += joint_velocities_command_[i] * period.seconds();
+  }
+
+  for (auto i = 0ul; i < joint_position_command_.size(); i++)
+  {
+    joint_position_[i] = joint_position_command_[i];
+  }
+
+  return return_type::OK;
+}
+
+return_type ArctosInterface::write(const rclcpp::Time &, const rclcpp::Duration &)
+{
+  return return_type::OK;
+}
+
+}  // namespace ros2_control_demo_example_7
+
 #include "pluginlib/class_list_macros.hpp"
-PLUGINLIB_EXPORT_CLASS(arctos_interface::ArctosInterface, hardware_interface::SystemInterface)
+
+PLUGINLIB_EXPORT_CLASS(
+  arctos_interface::ArctosInterface, hardware_interface::SystemInterface)
