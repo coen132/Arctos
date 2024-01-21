@@ -2,7 +2,6 @@
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 
 namespace arctos_interface
-
 {
     hardware_interface::CallbackReturn ArctosInterface::on_init(const hardware_interface::HardwareInfo & info) 
     {
@@ -10,6 +9,11 @@ namespace arctos_interface
         {
             return hardware_interface::CallbackReturn::ERROR; 
         }
+        // pub_can_ = p_node_->create_publisher<can_msgs::msg::Frame>("/to_can_bus", 5);
+        // timer_can_activate_ = p_node_->create_wall_timer(
+        // std::chrono::seconds(2),
+        // std::bind(&ArctosInterface::request_motor_angle, this)
+        // );
 
         hw_states_position_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
         hw_states_velocity_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN()); 
@@ -113,6 +117,19 @@ namespace arctos_interface
     {
         return hardware_interface::return_type::OK;
     }
+
+// void ArctosInterface::request_motor_angle() {
+
+//     can_msgs::msg::Frame request_angle_frame;
+//     request_angle_frame.dlc = 2;
+//     request_angle_frame.data = {48, 49, 0, 0, 0, 0, 0, 0};
+//     request_angle_frame.id = 1;
+//     pub_can_->publish(request_angle_frame);
+// }
+
+ArctosInterface::ArctosInterface(){
+
+}
 }
 #include "pluginlib/class_list_macros.hpp"
 PLUGINLIB_EXPORT_CLASS(arctos_interface::ArctosInterface, hardware_interface::SystemInterface)

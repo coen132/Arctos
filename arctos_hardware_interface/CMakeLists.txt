@@ -12,6 +12,9 @@ find_package(sensor_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
+find_package(realtime_tools REQUIRED)
+find_package(rcpputils REQUIRED)
+
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -26,7 +29,9 @@ add_library(
   ${PROJECT_NAME}
   SHARED
   src/arctos_interface.cpp
+  controller/arctos_controller.cpp
 )
+
 target_include_directories(
   ${PROJECT_NAME}
   PRIVATE
@@ -38,7 +43,10 @@ ament_target_dependencies(
   sensor_msgs
   hardware_interface
   pluginlib
-  rclcpp_lifecycle)
+  rclcpp_lifecycle
+  realtime_tools
+  rcpputils
+  trajectory_msgs)
 
 target_compile_definitions(${PROJECT_NAME}  PRIVATE "JOINT_STATE_BROADCASTER_BUILDING_DLL")
 target_compile_definitions(${PROJECT_NAME}  PUBLIC "PLUGINLIB__DISABLE_BOOST_FUCNTIONS")
@@ -51,6 +59,11 @@ install(
 install(
   DIRECTORY include/ 
   DESTINATION include
+)
+
+install(
+  DIRECTORY ros2_control/
+  DESTINATION share/arctos_hardware_interface/ros2_control
 )
 
 if(BUILD_TESTING)

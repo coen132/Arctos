@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<robot name="arctos_urdf" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="arctos" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 <xacro:include filename="$(find arctos_description)/urdf/materials.xacro" />
 <xacro:include filename="$(find arctos_description)/urdf/arctos_urdf.trans" />
@@ -277,5 +277,8 @@
   <axis xyz="0.0 -0.0 1.0"/>
   <limit upper="0.015" lower="0.0" effort="100" velocity="100"/>
 </joint>
+
+<xacro:include filename="$(find arctos_hardware_interface)/ros2_control/arctos.ros2_control.xacro" />
+<xacro:arctos_ros2_control name="arctos"/>
 
 </robot>
