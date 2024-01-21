@@ -16,6 +16,7 @@ find_package(arctos_moveit_config REQUIRED)
 install(DIRECTORY
   launch
   include
+  rviz
   DESTINATION share/${PROJECT_NAME}
 )
 
