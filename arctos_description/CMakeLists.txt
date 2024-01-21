@@ -6,6 +6,7 @@ find_package(arctos_hardware_interface REQUIRED)
 
 install(DIRECTORY urdf DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY meshes DESTINATION share/${PROJECT_NAME})
+install(DIRECTORY config DESTINATION share/${PROJECT_NAME})
 ament_package()
 
 

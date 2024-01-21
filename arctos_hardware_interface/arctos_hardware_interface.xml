@@ -6,7 +6,7 @@
         Hardware interface for the Arctos robot arm
     </description>
   </class>
-  <class name="arctos_controller/ArctostController"
+  <class name="arctos_controller/ArctosController"
          type="arctos_controller::ArctosController"
          base_class_type="controller_interface::ControllerInterface">
     <description>

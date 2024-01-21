@@ -66,6 +66,10 @@ install(
   DESTINATION share/arctos_hardware_interface/ros2_control
 )
 
+pluginlib_export_plugin_description_file(hardware_interface arctos_hardware_interface.xml)
+# Export controller plugins
+pluginlib_export_plugin_description_file(controller_interface arctos_hardware_interface.xml)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
