@@ -12,7 +12,6 @@
 
   <!-- Message types -->
   <depend>can_msgs</depend>
-  <depend>agv_curtis_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>hardware_interface</depend>
   <depend>pluginlib</depend>
