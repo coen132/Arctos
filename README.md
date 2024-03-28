@@ -4,6 +4,8 @@ This is a ROS2 package for the Arctos arm. make sure [ROS2](https://docs.ros.org
 ## Installation
 ### Install dependency controller packages
 `sudo apt install ros-humble-controller*`
+`sudo apt-get install ros-humble-can-msgs`
+`pip install catkin_pkg`
 
 ### Make sure everything is up to date
 `sudo apt update` \
