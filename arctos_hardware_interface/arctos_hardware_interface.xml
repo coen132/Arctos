@@ -1,16 +1,6 @@
 <library path="arctos_hardware_interface">
-  <class name="arctos_interface/ArctosInterface"
-         type="arctos_interface::ArctosInterface"
+  <class name="arctos_hardware_interface/ArctosHardwareInterface"
+         type="ArctosHardwareInterface"
          base_class_type="hardware_interface::SystemInterface">
-    <description>
-        Hardware interface for the Arctos robot arm
-    </description>
-  </class>
-  <class name="arctos_controller/ArctosController"
-         type="arctos_controller::ArctosController"
-         base_class_type="controller_interface::ControllerInterface">
-    <description>
-      Robot controller for Arctos robot arm.
-    </description>
   </class>
 </library>
